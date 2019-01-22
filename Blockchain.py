@@ -28,7 +28,6 @@ class Blockchain:
 
         # Initialize genesis block TODO what proof and hash? Does proof always have to be positive int?
         gen_block = self.new_block(proof=100, previous_hash=1)
-        self.blockchain.append(gen_block)
 
     def register(self, address):
         # address is the url of node: http://000.000.0.0:xxxx
@@ -71,7 +70,7 @@ class Blockchain:
 
     @staticmethod
     def proof_valid(previous_proof, proof):
-        guess_as_string = f'{previous_proof}{proof}'.encode() #this just concatenates
+        guess_as_string = f'{previous_proof}{proof}'.encode()
         guess = hashlib.sha256(guess_as_string).hexdigest()
         return guess[:4] == "0000"
 
@@ -113,11 +112,11 @@ class Blockchain:
         while idx < len(chain):
             # check that current block's "previous_hash" matches the hash of the previous block
             block = chain[idx]
-            if block['previous_hash'] is not self.hash(last_block):
+            if block['previous_hash'] != self.hash(last_block): # is not vs. !=
                 return False
 
             # check that proof is correct
-            if self.proof_valid(last_block['proof'], block['proof']):
+            if not self.proof_valid(last_block['proof'], block['proof']):
                 return False
 
             last_block = block
@@ -238,7 +237,7 @@ def consensus():
     return jsonify(response), 200
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)
 
 
 
